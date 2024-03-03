@@ -34,4 +34,4 @@ const validate = (data) => {
   return schema.validate(data);
 };
 
-export default Router;
+export default router;
