@@ -16,7 +16,7 @@ The objective of this project is to develop a web-based lie detection applicatio
 - npm package manager
 
 ## Installation
-1. Clone this repository: `git clone <repository_url>`
+1. Clone this repository: `git clone https://github.com/maheshs85/CS-555-Project`
 2. Navigate to the project directory: `cd CS-555-Project`
 3. Install backend dependencies: `cd backend && npm install`
 4. Install frontend dependencies: `cd frontend && npm install`
