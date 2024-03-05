@@ -1,10 +1,14 @@
 import NavLinks from "./nav-links.js";
 import { PowerIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Sidenav = () => {
-  const handleLogout = () => {
+  const navigate = useNavigate();
+  const handleLogout = (event) => {
     localStorage.removeItem("token");
     window.location.reload();
+    navigate('/login',{replace:true});
+   
   };
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">
