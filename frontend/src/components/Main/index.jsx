@@ -1,19 +1,11 @@
-import styles from "./styles.module.css";
-
-const Main = () => {
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.reload();
-  };
-
+import Sidenav from "../Sidenav.js";
+const Main = ({children}) => {
   return (
-    <div className={styles.main_container}>
-      <nav className={styles.navbar}>
-        <h1>Cyber Coders</h1>
-        <button className={styles.white_btn} onClick={handleLogout}>
-          Logout
-        </button>
-      </nav>
+    <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
+      <div className="w-full flex-none md:w-64">
+        <Sidenav />
+      </div>
+      <div className="flex-grow p-6 md:overflow-y-auto md:p-12">{children}</div>
     </div>
   );
 };
