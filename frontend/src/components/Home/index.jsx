@@ -1,5 +1,5 @@
-const user = localStorage.getItem("token");
-console.log(user)
+// const user = localStorage.getItem("token");
+import React from "react";
 const Home = () => {
     return (
         <div className="flex-col">
@@ -73,7 +73,7 @@ const Home = () => {
             <div className="mt-3">
                 <h2 className="font-semibold text-2xl">Click upload to detect Lie on the go!</h2>
                 <form className="mt-6">
-                    <label htmlFor="uploadFile1"
+                    <label htmlFor="uploadFile1" 
                         className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-4 py-2.5 outline-none rounded w-max cursor-pointer mx-auto block font-[sans-serif] my-auto">
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 mr-2 fill-white inline" viewBox="0 0 32 32">
                             <path
@@ -84,7 +84,7 @@ const Home = () => {
                                 data-original="#000000" />
                         </svg>
                         Upload
-                        <input type="file" id='uploadFile1' className="hidden"  accept=".csv"/>
+                        <input type="file" id='uploadFile1' className="hidden"  accept=".csv" />
                     </label>
                 </form>
             </div>

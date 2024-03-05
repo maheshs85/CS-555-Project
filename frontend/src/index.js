@@ -8,20 +8,14 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./index.css";
-import { Main, Signup, Login} from "./components";
-import Home from "./components/Home";
-import About from "./components/About";
-import Result from "./components/Result";
+import { Main, Signup, Login, Home, About, Result} from "./components";
 const user = localStorage.getItem("token");
-const home = <Home />
-const about = <About />
-const result = <Result />
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      {user && <Route path="/" exact element={<Main children={home}/>} />}
-      {user && <Route path="/about" exact element={<Main children={about}/>} />}
-      {user && <Route path="/result" exact element={<Main children={result}/>} />}
+      {user && <Route path="/" exact element={<Main children={<Home/>}/>} />}
+      {user && <Route path="/about" exact element={<Main children={<About/>}/>} />}
+      {user && <Route path="/result" exact element={<Main children={<Result/>}/>} />}
       <Route path="/signup" exact element={<Signup />} />
       <Route path="/login" exact element={<Login />} />
       <Route path="/" element={<Navigate replace to="/login" />} />
