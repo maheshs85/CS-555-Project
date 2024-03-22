@@ -14,3 +14,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+table.table-fixed tbody tr:hover {
+  background-color: rgb(238, 239, 255);
+}
