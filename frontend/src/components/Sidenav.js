@@ -6,7 +6,7 @@ const Sidenav = () => {
   const navigate = useNavigate();
   const handleLogout = (event) => {
     localStorage.removeItem("token");
-    window.location.reload();
+    // window.location.reload();
     navigate('/login',{replace:true});
    
   };
