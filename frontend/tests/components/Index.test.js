@@ -73,3 +73,4 @@ test('Handling error for login submission in the event of invalid credentials be
       expect(screen.getByText(errorMessage)).toBeInTheDocument(); //checks to see if the error message is displayed to the user 
     });
   });
+
