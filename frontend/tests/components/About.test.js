@@ -46,7 +46,7 @@ describe('About Page', () => {
     expect(screen.getByText('Node.JS, Express.js, Mongoose')).toBeInTheDocument();
     expect(screen.getByText('Machine Learning Library')).toBeInTheDocument();
     expect(screen.getByText('EEG Deep Learning Library')).toBeInTheDocument();
-    expect(screen.getByText('Data processing')).toBeInTheDocument();
+    expect(screen.getByText('Data Processing')).toBeInTheDocument();
     expect(screen.getByText('Numpy, Scipy, Pandas')).toBeInTheDocument();
     expect(screen.getByText('Infrastructure and Deployment')).toBeInTheDocument();
     expect(screen.getByText('Github actions, Heroku')).toBeInTheDocument();
