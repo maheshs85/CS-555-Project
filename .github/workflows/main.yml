@@ -31,6 +31,9 @@ jobs:
     - name: Run frontend tests
       run: npm test
 
+    - name: check chart.js version
+      run: npm list chart.js
+
   build-and-run-backend:
     runs-on: windows-latest
     defaults:
