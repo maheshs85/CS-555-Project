@@ -90,6 +90,7 @@ const About = () => {
         </table>
       </section>
     </div>
+    
   );
 };
 
