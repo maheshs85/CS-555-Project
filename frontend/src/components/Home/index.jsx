@@ -1,37 +1,47 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const user = localStorage.getItem("token");
-console.log(user);
 const Home = () => {
   const [file, setFile] = useState("");
   const [topic, setTopic] = useState("");
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (file) {
-      toast.info("File Uploaded successfully!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      toast.error("File was not uploaded", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
+    // console.log(file);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("topic", topic);
+      formData.append("email", localStorage.getItem("email"));
+      const url = "http://localhost:8080/api/eeg";
+      const { data } = await axios.post(url, formData);
+      if (data.message === "EEG data saved successfully") {
+        toast.info("File Uploaded successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else {
+        toast.error("File was not uploaded", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
+    } catch (error) {
+      console.log(e);
     }
   };
   const handleFileChange = (event) => {
