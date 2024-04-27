@@ -26,18 +26,23 @@ def load_data(filepath):
             return eeg_data
 
 
+
 def preprocess_data(eeg_data, include_labels=True):
     features = np.array([[entry['EEG.AF3'], entry['EEG.T7'], entry['EEG.Pz'],
                           entry['EEG.T8'], entry['EEG.AF4']] for entry in eeg_data])
     if include_labels:
-        labels = np.array([1 if entry['label'] == 'False' else 0 for entry in eeg_data])
+        labels = np.array([0 if entry['label'] == 'False' else 1 for entry in eeg_data])
+        print(f"Preprocessed features shape: {features.shape}, labels shape: {labels.shape}")
         return features, labels
     else:
         return features, None
 
 
 def split_data(features, labels):
+    print(f"Original features shape: {features.shape}, labels shape: {labels.shape}")
     x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
+    print(f"Train features shape: {x_train.shape}, Train labels shape: {y_train.shape}")
+    print(f"Test features shape: {x_test.shape}, Test labels shape: {y_test.shape}")
     return x_train, x_test, y_train, y_test
 
 
@@ -57,11 +62,11 @@ def create_datasets_loaders(x_train, y_train, x_test, y_test):
 
     train_dataset = TensorDataset(x_train_tensor, y_train_tensor)
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    print(f"Batch size from DataLoader: {next(iter(train_loader))[0].shape[0]}")
+    #print(f"Batch size from DataLoader: {next(iter(train_loader))[0].shape[0]}")
 
     test_dataset = TensorDataset(x_test_tensor, y_test_tensor)
     test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
-    print(f"Batch size from DataLoader: {next(iter(train_loader))[0].shape[0]}")
+    #print(f"Batch size from DataLoader: {next(iter(train_loader))[0].shape[0]}")
 
     return train_loader, test_loader
 
@@ -74,6 +79,7 @@ class EEG_BiLSTM(nn.Module):
         self.bilstm = nn.LSTM(input_dim, hidden_dim, num_layers,
                               batch_first=True, dropout=dropout_prob, bidirectional=True)
         self.linear = nn.Linear(hidden_dim * 2, output_dim)
+        #self.relu=nn.ReLU()
 
     def forward(self, x):
         x = x.unsqueeze(1) if x.dim() == 2 else x  # Ensures [batch, sequence, features]
@@ -81,6 +87,7 @@ class EEG_BiLSTM(nn.Module):
         c0 = torch.zeros(self.num_layers * 2, x.size(0), self.hidden_dim, device=x.device)
         out, _ = self.bilstm(x, (h0, c0))
         out = self.linear(out[:, -1, :])
+        #out = self.relu(out)
         return out
 
 
@@ -91,7 +98,7 @@ def train_model(model, train_loader, device, criterion, optimizer, num_epochs,sa
             data, labels = data.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = model(data)
-            print(f"Output shape: {outputs.shape}, Labels shape: {labels.shape}")
+            #print(f"Output shape: {outputs.shape}, Labels shape: {labels.shape}")
 
             loss = criterion(outputs, labels)
             loss.backward()
@@ -131,10 +138,12 @@ def evaluate_model(model, data_loader, device, has_labels=True):
         print(f'Calculated Test Accuracy: {accuracy:.2f}%')
         return np.array(all_labels), np.array(all_predictions), accuracy
     else:
-        return np.array(all_predictions)  # Return only predictions if no labels are present
-    
+        return np.array(all_predictions)  
+
+
+
 def plot_results(all_labels, all_predictions):
-    # Calculate the number of predictions for each class present below
+   
     labels = ['Truth', 'Lie']
     values = [np.sum(all_predictions == 0), np.sum(all_predictions == 1)]
 
@@ -157,7 +166,7 @@ def plot_results(all_labels, all_predictions):
 
 def main():
     print("Current Working Directory: ", os.getcwd())
-    eeg_data = load_data('C:/SSW-555 Agile/CS-555-Project/frontend/public/eeg_data_labeled.json')
+    eeg_data = load_data('C:/Final SSW-555 Agile Project/CS-555-Project/Backend/uploads/eeg_data_labeled.json')
     features, labels = preprocess_data(eeg_data, include_labels=True)
     x_train, x_test, y_train, y_test = split_data(features, labels)
     print(f"Features shape: {x_train.shape}, Labels shape: {y_train.shape}")
@@ -166,15 +175,16 @@ def main():
     train_loader, test_loader = create_datasets_loaders(x_train, y_train, x_test, y_test)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = EEG_BiLSTM(input_dim=5, hidden_dim=50, output_dim=2, num_layers=1, dropout_prob=0.5).to(device)
+    model = EEG_BiLSTM(input_dim=5, hidden_dim=100, output_dim=2, num_layers=1, dropout_prob=0.7).to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.005)
     model_save_path = 'models/model.pth'
     os.makedirs('models', exist_ok=True)  
 
     train_model(model, train_loader, device, criterion, optimizer, num_epochs=20, save_path=model_save_path)
 
     all_labels, all_predictions, accuracy = evaluate_model(model, test_loader, device)
+    
     print(f'Test Accuracy: {accuracy:.2f}%')
     plot_results(all_labels, all_predictions)
 
