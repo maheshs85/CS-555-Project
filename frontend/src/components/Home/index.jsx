@@ -5,13 +5,19 @@ import 'react-toastify/dist/ReactToastify.css';
 const user = localStorage.getItem("token");
 console.log(user)
 const Home = () => {
-    const [file, setFile] = useState("")
-    const [topic, setTopic] = useState("")
+    const [file, setFile] = useState(null);
+    const [topic, setTopic] = useState("");
     const navigate = useNavigate();
+
+    const handleFileChange = (event) => {
+        const selectedFile = event.target.files[0];
+        setFile(selectedFile);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (file) {
-            toast.info('File Uploaded successfully!', {
+        if (!file) {
+            toast.error('No file selected', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: true,
@@ -19,11 +25,44 @@ const Home = () => {
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-                theme: "light",
+                theme: "colored",
             });
+            return; // Stop the function if no file is selected
         }
-        else {
-            toast.error('File was not uploaded', {
+
+        const formData = new FormData();
+        formData.append("file", file); // Ensure the name 'file' matches with your backend endpoint
+        for (var pair of formData.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]); 
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/upload/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    // Do not set Content-Type for FormData; the browser will set it with the correct boundary.
+                },
+            });
+            const result = await response.json();
+            if (response.ok) {
+                toast.info('File uploaded successfully!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                console.log(result); // Optionally handle result further, like storing in state or navigating to another route
+            } else {
+                throw new Error(result.message || "An error occurred while uploading the file");
+            }
+        } catch (error) {
+            toast.error(error.message, {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: true,
@@ -34,10 +73,6 @@ const Home = () => {
                 theme: "colored",
             });
         }
-    }
-    const handleFileChange = (event) => {
-        const selectedFile = event.target.files[0];
-        setFile(selectedFile);
     };
     return (
         <div className="flex-col">
