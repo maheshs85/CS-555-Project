@@ -1,59 +1,58 @@
 [
-    {
-      "time": 0.0,
-      "channel1": 0.123,
-      "channel2": -0.456,
-      "channel3": 0.789,
-      "channel4": -0.321,
-      "label": "Truth"
-    },
-    {
-      "time": 0.001,
-      "channel1": 0.234,
-      "channel2": -0.567,
-      "channel3": 0.678,
-      "channel4": -0.432,
-      "label": "False"
-    },
-    {
-      "time": 0.002,
-      "channel1": 0.345,
-      "channel2": -0.678,
-      "channel3": 0.567,
-      "channel4": -0.543,
-      "label": "Truth"
-    },
-    {
-      "time": 0.003,
-      "channel1": 0.456,
-      "channel2": -0.789,
-      "channel3": 0.456,
-      "channel4": -0.654,
-      "label": "False"
-    },
-    {
-      "time": 0.004,
-      "channel1": 0.567,
-      "channel2": -0.89,
-      "channel3": 0.345,
-      "channel4": -0.765,
-      "label": "Truth"
-    },
-    {
-      "time": 0.005,
-      "channel1": 0.678,
-      "channel2": -0.901,
-      "channel3": 0.234,
-      "channel4": -0.876,
-      "label": "False"
-    },
-    {
-      "time": 0.008,
-      "channel1": 0.589,
-      "channel2": -0.678,
-      "channel3": 0.234,
-      "channel4": -0.333,
-      "label": "False"
-    }
+  {
+    "time": 0.0,
+    "channel1": 0.123,
+    "channel2": -0.456,
+    "channel3": 0.789,
+    "channel4": -0.321,
+    "label": "Truth"
+  },
+  {
+    "time": 0.001,
+    "channel1": 0.234,
+    "channel2": -0.567,
+    "channel3": 0.678,
+    "channel4": -0.432,
+    "label": "False"
+  },
+  {
+    "time": 0.002,
+    "channel1": 0.345,
+    "channel2": -0.678,
+    "channel3": 0.567,
+    "channel4": -0.543,
+    "label": "Truth"
+  },
+  {
+    "time": 0.003,
+    "channel1": 0.456,
+    "channel2": -0.789,
+    "channel3": 0.456,
+    "channel4": -0.654,
+    "label": "False"
+  },
+  {
+    "time": 0.004,
+    "channel1": 0.567,
+    "channel2": -0.89,
+    "channel3": 0.345,
+    "channel4": -0.765,
+    "label": "Truth"
+  },
+  {
+    "time": 0.005,
+    "channel1": 0.678,
+    "channel2": -0.901,
+    "channel3": 0.234,
+    "channel4": -0.876,
+    "label": "False"
+  },
+  {
+    "time": 0.008,
+    "channel1": 0.589,
+    "channel2": -0.678,
+    "channel3": 0.234,
+    "channel4": -0.333,
+    "label": "False"
+  }
 ]
-  
