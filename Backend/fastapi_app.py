@@ -18,7 +18,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel,Field
 from typing import List
 from hashlib import sha256
-
+from datetime import datetime
+from bson.json_util import dumps
 
 
 
@@ -155,7 +156,12 @@ async def create_upload_file(file: UploadFile = File(...)):
 
         classification_rep = classification_report(all_labels, all_predictions, target_names=['Truth', 'Lie'], output_dict=True)
 
+        current_date = datetime.now()
+
+        formatted_date = current_date.strftime("%Y-%m-%d %H:%M:%S")
         result_data = {
+            "date": formatted_date,
+            "filename": file.filename,
             "accuracy": accuracy,
             "precision": classification_rep['weighted avg']['precision'],
             "recall": classification_rep['weighted avg']['recall'],
@@ -208,7 +214,36 @@ async def get_latest_result():
         result['confusion_matrix_image'] = plot_confusion_matrix(all_labels, all_predictions)
 
     return result
+@app.get("/uploads/")
+async def get_all_uploads():
+    results = []
+    async for result in results_data_collection.find().limit(5):
+        result_dict = json.loads(dumps(result))
+        results.append(result_dict)
+    return results
 
+@app.get("/results/{result_id}", response_model=ResultModel)
+async def get_result_by_id(result_id: str):
+    try:
+        # Convert the string ID to ObjectId
+        result_object_id = ObjectId(result_id)
+        # Query the database to find the result by its ObjectId
+        result = await results_data_collection.find_one({"_id": result_object_id})
+        
+        if not result:
+            raise HTTPException(status_code=404, detail="Result not found")
+        
+        # Check if images are not present, generate them
+        if 'prediction_distribution_image' not in result or 'confusion_matrix_image' not in result:
+            all_labels = np.array(result['all_labels'])
+            all_predictions = np.array(result['all_predictions'])
+            result['prediction_distribution_image'] = plot_results(all_labels, all_predictions)
+            result['confusion_matrix_image'] = plot_confusion_matrix(all_labels, all_predictions)
+        
+        return result
+    except Exception as e:
+        logger.error(f"Error fetching result: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

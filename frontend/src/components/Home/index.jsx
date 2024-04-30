@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,12 +8,28 @@ const Home = () => {
     const [file, setFile] = useState(null);
     const [topic, setTopic] = useState("");
     const navigate = useNavigate();
-
+    const [uploads, setUploads] = useState(null);
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
         setFile(selectedFile);
     };
-
+    useEffect(() => {
+        const fetchResults = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/uploads/');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log(data)
+                setUploads(data);
+            } catch (e) {
+                console.error("Error fetching data:", e);
+                // setError(e.message);
+            }
+        };
+        fetchResults();
+    }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!file) {
@@ -58,6 +74,7 @@ const Home = () => {
                     theme: "light",
                 });
                 console.log(result);
+                navigate("/result/" + result.result_id);
             } else {
                 throw new Error(result.message || "An error occurred while uploading the file");
             }
@@ -96,59 +113,25 @@ const Home = () => {
                             </th>
                         </tr>
                     </thead>
-
                     <tbody className="divide-y divide-gray-200 text-gray-900">
-                        <tr className="group cursor-pointer"
-                            onClick={() => {
-                                navigate("/result");
-                            }}>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                                01/01/2024
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                EEGdata.csv
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                Liewaves
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                97.5%
-                            </td>
-                        </tr>
-                        <tr className="group cursor-pointer"
-                            onClick={() => {
-                                navigate("/result");
-                            }}>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                                01/01/2024
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                EEGdata.csv
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                Liewaves
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                97.5%
-                            </td>
-                        </tr>
-                        <tr className="group cursor-pointer"
-                            onClick={() => {
-                                navigate("/result");
-                            }}>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                                01/01/2024
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                EEGdata.csv
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                Liewaves
-                            </td>
-                            <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                                97.5%
-                            </td>
-                        </tr>
+                        {uploads && uploads.map(upload => {
+                            return (
+                                <tr key={upload._id.$oid} className="group cursor-pointer"
+                                    onClick={() => {
+                                        navigate("/result/" + upload._id.$oid);
+                                    }}>
+                                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                                        {upload.date}
+                                    </td>
+                                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                                        {upload.filename}
+                                    </td>
+                                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                                        {upload.accuracy}
+                                    </td>
+                                </tr>
+                            )
+                        })}
                     </tbody>
                 </table>
             </div>

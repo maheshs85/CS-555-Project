@@ -29,6 +29,9 @@ const router = createBrowserRouter(
         <Route path="/result" exact element={<Main children={result} />} />
       )}
       {user && (
+        <Route path="/result/:id" exact element={<Main children={result} />} />
+      )}
+      {user && (
         <Route path="/history" exact element={<Main children={history} />} />
       )}
       <Route path="/signup" exact element={<Signup />} />

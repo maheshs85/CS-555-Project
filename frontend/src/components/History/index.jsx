@@ -1,8 +1,27 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 const user = localStorage.getItem("token");
 console.log(user);
 const History = () => {
   const navigate = useNavigate();
+  const [uploads, setUploads] = useState(null);
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/uploads/');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data)
+        setUploads(data);
+      } catch (e) {
+        console.error("Error fetching data:", e);
+        // setError(e.message);
+      }
+    };
+    fetchResults();
+  }, []);
   return (
     <div className="flex-col">
       <div className="mt-6">
@@ -26,63 +45,24 @@ const History = () => {
           </thead>
 
           <tbody className="divide-y divide-gray-200 text-gray-900">
-            <tr
-              className="group cursor-pointer"
-              onClick={() => {
-                navigate("/result");
-              }}
-            >
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                01/01/2024
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                EEGdata.csv
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                Liewaves
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                97.5%
-              </td>
-            </tr>
-            <tr
-              className="group cursor-pointer"
-              onClick={() => {
-                navigate("/result");
-              }}
-            >
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                01/01/2024
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                EEGdata.csv
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                Liewaves
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                97.5%
-              </td>
-            </tr>
-            <tr
-              className="group cursor-pointer"
-              onClick={() => {
-                navigate("/result");
-              }}
-            >
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                01/01/2024
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                EEGdata.csv
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                Liewaves
-              </td>
-              <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                97.5%
-              </td>
-            </tr>
+            {uploads && uploads.map(upload => {
+              return (
+                <tr key={upload._id.$oid} className="group cursor-pointer"
+                  onClick={() => {
+                    navigate("/result/" + upload._id.$oid);
+                  }}>
+                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                    {upload.date}
+                  </td>
+                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                    {upload.filename}
+                  </td>
+                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                    {upload.accuracy}
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
