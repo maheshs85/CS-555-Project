@@ -39,7 +39,11 @@ const Result = () => {
   }
 
   if (!resultData) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   return (
