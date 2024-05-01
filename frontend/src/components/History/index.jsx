@@ -5,9 +5,11 @@ console.log(user);
 const History = () => {
   const navigate = useNavigate();
   const [uploads, setUploads] = useState(null);
+  const [uploadsLoading, setUploadsLoading] = useState(false);
   useEffect(() => {
     const fetchResults = async () => {
       try {
+        setUploadsLoading(true);
         const response = await fetch('http://127.0.0.1:8000/uploads/');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -18,6 +20,8 @@ const History = () => {
       } catch (e) {
         console.error("Error fetching data:", e);
         // setError(e.message);
+      } finally {
+        setUploadsLoading(false);
       }
     };
     fetchResults();
@@ -45,24 +49,41 @@ const History = () => {
           </thead>
 
           <tbody className="divide-y divide-gray-200 text-gray-900">
-            {uploads && uploads.map(upload => {
-              return (
-                <tr key={upload._id.$oid} className="group cursor-pointer"
-                  onClick={() => {
-                    navigate("/result/" + upload._id.$oid);
-                  }}>
-                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                    {upload.date}
-                  </td>
-                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                    {upload.filename}
-                  </td>
-                  <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                    {upload.accuracy}
+            {uploadsLoading ?
+              <tr>
+                <td colSpan={4} className="py-3 " >
+                  <div className="flex items-center justify-center">
+                    <div className="spinner"></div>
+                  </div>
+                </td>
+
+              </tr>
+              : uploads ? uploads.map(upload => {
+                return (
+                  <tr key={upload._id.$oid} className="group cursor-pointer"
+                    onClick={() => {
+                      navigate("/result/" + upload._id.$oid);
+                    }}>
+                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
+                      {upload.date}
+                    </td>
+                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                      {upload.filename}
+                    </td>
+                    <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
+                      {upload.accuracy}
+                    </td>
+                  </tr>
+                )
+              }) :
+                <tr>
+                  <td colSpan={4} className="py-3 " >
+                    <div className="flex items-center justify-center">
+                      No Records to display
+                    </div>
                   </td>
                 </tr>
-              )
-            })}
+              }
           </tbody>
         </table>
       </div>
